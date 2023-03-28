@@ -1,0 +1,19 @@
+{
+  "name": "Google Calendar Default Start Times",
+  "description": "Inject default start times into Google Calendar's \"Create Event\" interface.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://calendar.google.com/calendar/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
