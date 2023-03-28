@@ -34,17 +34,17 @@ const mutateTime = async function(containerElementJSName, mutationInMinutes) {
   const newValue = "whatever"
   inputElement.setAttribute('data-initial-value', newValue)
 
-  await new Promise(r => setTimeout(r, 100))
+  await new Promise(r => setTimeout(r, 200))
 
   // Click in and out of the input to trigger Google UI scripts (simulate real user input)
   inputElement.click()
   const modalWhiteSpace = document.querySelectorAll("[jsname='uxAMZ']")[0]
   modalWhiteSpace.dispatchEvent(new MouseEvent('mousedown'))
 
-  await new Promise(r => setTimeout(r, 100));
+  await new Promise(r => setTimeout(r, 200));
 }
 
-const callback = async function() {
+const callback = function() {
   if (modalVisible !== !!modalContainer.children.length) {
     console.log(`modalVisible is now ${!!modalContainer.children.length}`)
     modalVisible = !!modalContainer.children.length
@@ -54,12 +54,22 @@ const callback = async function() {
       const timeslotButton = document.querySelectorAll('[jsname="GIdnzc"] button')[0]
       timeslotButton.click()
 
-      // 2. Delay start time
-      await mutateTime("B4GDSd",5)
+      chrome.storage.sync.get("startTimeOffsetInMinutes", async data => {
+        const delay = parseInt(data.startTimeOffsetInMinutes)
 
-      // 3. Change the subsequently changed end time back to what it was
-      //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
-      await mutateTime("XCHdmd",-5)
+        // 2. Delay start time
+        await mutateTime("B4GDSd", delay)
+
+        // 3. Change the subsequently changed end time back to what it was
+        //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
+        chrome.storage.sync.get("persistDuration", async data => {
+          const persist = !!data.persistDuration
+
+          if (!persist) {
+            await mutateTime("XCHdmd", -delay)
+          }
+        })
+      })
 
       // 4. Focus back to the "title" input
       const titleElement = document.querySelectorAll(`[jsname="Y9wHSb"] input`)[0]
