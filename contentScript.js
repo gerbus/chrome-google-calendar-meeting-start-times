@@ -22,21 +22,21 @@ var observeDOM = (function() {
 })()
 
 const mutateTime = async function(containerElementJSName, mutationInMinutes) {
-  //    iCal data attribute
+  // Mutate iCal data attribute
   const containerElement = document.querySelectorAll(`[jsname="${containerElementJSName}"]`)[0]
   const originalIcalValue = containerElement.getAttribute('data-ical')
-  const newIcalValue = originalIcalValue.substring(0,originalIcalValue.length - 3) + mutationInMinutes + '00'
+  const newIcalValueInt = parseInt(originalIcalValue.substring(1)) + (mutationInMinutes * 100)
+  const newIcalValue = 'T' + newIcalValueInt.toString().padStart(6, '0')
   containerElement.setAttribute('data-ical', newIcalValue)
 
-  //    Input control
+  // Mutate input control (can change to anything, Google looks at the above)
   const inputElement = document.querySelectorAll(`[jsname="${containerElementJSName}"] input`)[0]
-  const originalValue = inputElement.value
-  const newValue = originalValue.substring(0, originalValue.length - 1) + mutationInMinutes
-  inputElement.value = newValue
+  const newValue = "whatever"
   inputElement.setAttribute('data-initial-value', newValue)
 
   await new Promise(r => setTimeout(r, 100))
 
+  // Click in and out of the input to trigger Google UI scripts (simulate real user input)
   inputElement.click()
   const modalWhiteSpace = document.querySelectorAll("[jsname='uxAMZ']")[0]
   modalWhiteSpace.dispatchEvent(new MouseEvent('mousedown'))
@@ -59,7 +59,7 @@ const callback = async function() {
 
       // 3. Change the subsequently changed end time back to what it was
       //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
-      await mutateTime("XCHdmd",0)
+      await mutateTime("XCHdmd",-5)
 
       // 4. Focus back to the "title" input
       const titleElement = document.querySelectorAll(`[jsname="Y9wHSb"] input`)[0]
