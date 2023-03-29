@@ -34,14 +34,16 @@ const mutateTime = async function(containerElementJSName, mutationInMinutes) {
   const newValue = "whatever"
   inputElement.setAttribute('data-initial-value', newValue)
 
-  await new Promise(r => setTimeout(r, 200))
+  console.log("wait")
+  await new Promise(r => setTimeout(r, wait))
 
   // Click in and out of the input to trigger Google UI scripts (simulate real user input)
   inputElement.click()
   const modalWhiteSpace = document.querySelectorAll("[jsname='uxAMZ']")[0]
   modalWhiteSpace.dispatchEvent(new MouseEvent('mousedown'))
 
-  await new Promise(r => setTimeout(r, 200));
+  console.log("wait")
+  await new Promise(r => setTimeout(r, wait));
 }
 
 const callback = function() {
@@ -50,36 +52,39 @@ const callback = function() {
     modalVisible = !!modalContainer.children.length
 
     if (modalVisible) {
+
       // 1. Expand datetime section of modal
       const timeslotButton = document.querySelectorAll('[jsname="GIdnzc"] button')[0]
       timeslotButton.click()
 
       chrome.storage.sync.get("startTimeOffsetInMinutes", async data => {
-        const delay = parseInt(data.startTimeOffsetInMinutes)
+        const offset = parseInt(data.startTimeOffsetInMinutes)
 
-        // 2. Delay start time
-        await mutateTime("B4GDSd", delay)
+        // 2. Adjust start-time
+        await mutateTime("B4GDSd", offset)
 
-        // 3. Change the subsequently changed end time back to what it was
-        //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
         chrome.storage.sync.get("persistDuration", async data => {
           const persist = !!data.persistDuration
-
           if (!persist) {
-            await mutateTime("XCHdmd", -delay)
+
+            // 3. Adjust the subsequently changed end-time back to what it was
+            //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
+            await mutateTime("XCHdmd", -offset)
           }
+
+          // 4. Focus back to the "title" input
+          const titleElement = document.querySelectorAll(`[jsname="Y9wHSb"] input`)[0]
+          console.log("focus")
+          titleElement.focus()
         })
       })
-
-      // 4. Focus back to the "title" input
-      const titleElement = document.querySelectorAll(`[jsname="Y9wHSb"] input`)[0]
-      titleElement.focus()
     }
   }
 }
 
 
 let modalVisible = false
+const wait = 50
 const modalContainer = document.getElementById("yDmH0d")
 observeDOM(modalContainer, callback)
 
