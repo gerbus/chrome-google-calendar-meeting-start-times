@@ -1,5 +1,7 @@
 const delayInputElement = document.getElementById("delay")
 const persistInputElement = document.getElementById("persistDuration")
+const persistTooltipIconElement = document.getElementById("persistDuration_tooltip_icon")
+const persistTooltipElement = document.getElementById("persistDuration_tooltip")
 
 
 // Load values from localstorage on popup init
@@ -17,3 +19,8 @@ persistInputElement.addEventListener("change", e => {
   chrome.storage.sync.set({ persistDuration })
 })
 
+
+// Add listener for tooltip
+persistTooltipIconElement.addEventListener("mouseover", e => {
+  persistTooltipElement.style.display = "block"
+})

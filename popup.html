@@ -1,45 +1,61 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Auto-adjust start times in Google Calendar</title>
-  <meta name="description" content="A Google Chrome extension which automatically augments start times in Google Calendar.">
-  <meta name="author" content="Christopher X Gerber">
+    <title>Auto-adjust start times in Google Calendar</title>
+    <meta name="description" content="A Google Chrome extension which automatically augments start times in Google Calendar.">
+    <meta name="author" content="Christopher X Gerber">
 
-  <meta property="og:title" content="Auto-adjust start times in Google Calendar">
-  <meta property="og:type" content="website">
-  <meta property="og:description" content="A Google Chrome extension which automatically augments start times in Google Calendar.">
-  <meta property="og:image" content="image.png">
+    <meta property="og:title" content="Auto-adjust start times in Google Calendar">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="A Google Chrome extension which automatically augments start times in Google Calendar.">
+    <meta property="og:image" content="image.png">
 
-  <link rel="icon" href="/favicon.ico">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
-  <style type="text/css">
-    html {
-      width: 200px;
-      height: 200px;
-    }
-  </style>
-</head>
+    <link rel="stylesheet" href="css/styles.css?v=1.0">
+    <style type="text/css">
+      html {
+        width: 300px;
+        border-radius: 3px;
+      }
+      p {
+        line-height: 1;
+      }
+      #persistDuration_tooltip_icon {
+        cursor: pointer;
+      }
+      #persistDuration_tooltip {
+        display: none;
+      }
+    </style>
+  </head>
 
-<body>
-  <h3>Auto-adjust start times in Google Calendar</h3>
-
-  <section>
-    <label>Minutes to <b>offset</b> start time by</label>
-    <input id="delay" type="number" />
-  </section>
-
-  <section>
-    <label><b>Persist</b> event duration?</label>
-    <input id="persistDuration" type="checkbox" />
-  </section>
-
-  <script src="popup.js"></script>
-</body>
+  <body>
+    <div class="container mt-3 mb-3">
+      <h5>
+        <img class="float-left mr-3" width="72" src="icon_128.png" />
+        Auto-adjust start-times in Google Calendar
+      </h5>
+      <hr />
+      <form>
+        <div class="form-group">
+          <label for="delay">Minutes to <b>offset</b> start times by</label>
+          <input class="form-control" id="delay" type="number" />
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" id="persistDuration" type="checkbox" />
+          <label class="form-check-label" for="persistDuration"><b>Persist</b> event duration</label>&nbsp;<span id="persistDuration_tooltip_icon">ⓘ</span>
+          <p id="persistDuration_tooltip"><small>When this is enabled, the end-time of the meeting will be offset by the same amount as the start-time</small></p>
+        </div>
+      </form>
+    </div>
+    <script src="popup.js"></script>
+  </body>
 </html>
