@@ -1,6 +1,6 @@
 {
-  "name": "Auto-adjust start times in Google Calendar",
-  "description": "Inject default start times into Google Calendar's \"Create Event\" interface.",
+  "name": "Offset start-times in Google Calendar",
+  "description": "Offsets start-times by default when adding a Google Calendar event, using a user-configured number of minutes.",
   "version": "1.0.0",
   "manifest_version": 3,
   "permissions": [
