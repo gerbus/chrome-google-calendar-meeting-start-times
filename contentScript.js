@@ -34,7 +34,6 @@ const mutateTime = async function(containerElementJSName, mutationInMinutes) {
   const newValue = "whatever"
   inputElement.setAttribute('data-initial-value', newValue)
 
-  console.log("wait")
   await new Promise(r => setTimeout(r, wait))
 
   // Click in and out of the input to trigger Google UI scripts (simulate real user input)
@@ -42,13 +41,11 @@ const mutateTime = async function(containerElementJSName, mutationInMinutes) {
   const modalWhiteSpace = document.querySelectorAll("[jsname='uxAMZ']")[0]
   modalWhiteSpace.dispatchEvent(new MouseEvent('mousedown'))
 
-  console.log("wait")
   await new Promise(r => setTimeout(r, wait));
 }
 
 const callback = function() {
   if (modalVisible !== !!modalContainer.children.length) {
-    console.log(`modalVisible is now ${!!modalContainer.children.length}`)
     modalVisible = !!modalContainer.children.length
 
     if (modalVisible) {
@@ -74,7 +71,6 @@ const callback = function() {
 
           // 4. Focus back to the "title" input
           const titleElement = document.querySelectorAll(`[jsname="Y9wHSb"] input`)[0]
-          console.log("focus")
           titleElement.focus()
         })
       })

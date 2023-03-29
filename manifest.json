@@ -1,11 +1,9 @@
 {
   "name": "Offset start-times in Google Calendar",
   "description": "Offsets start-times by default when adding a Google Calendar event, using a user-configured number of minutes.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "permissions": [
-    "scripting",
-    "activeTab",
     "storage"
   ],
   "background": {
