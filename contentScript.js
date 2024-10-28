@@ -21,19 +21,29 @@ var observeDOM = (function() {
   }
 })()
 
+const getElementOrThrow = (queryFn, context = 'Unknown') => {
+  const element = queryFn();
+  if (!element) {
+    const error = `Failed to find element (${context})`;
+    console.error(error);
+    throw new Error(error);
+  }
+  return element;
+};
+
 const mutateTime = async function(containerElementJSName, mutationInMinutes) {
   // Grab whitespace to click out of input later
-  let modalWhiteSpace = document.querySelectorAll("[jsname='uxAMZ']")[0] // uxAMZ is the jsname value of the div containing the white space of the part of the modal that doesn't contain the title input or the buttons at the bottom
+  let modalWhiteSpace = getElementOrThrow(() => document.querySelectorAll("[jsname='uxAMZ']")[0], "Modal whitespace") // uxAMZ is the jsname value of the div containing the white space of the part of the modal that doesn't contain the title input or the buttons at the bottom
 
   // Mutate iCal data attribute
-  const containerElement = document.querySelectorAll(`[jsname="${containerElementJSName}"]`)[0]
+  const containerElement = getElementOrThrow(() => document.querySelectorAll(`[jsname="${containerElementJSName}"]`)[0], "Time container")
   const originalIcalValue = containerElement.getAttribute('data-ical')
   const newIcalValueInt = parseInt(originalIcalValue.substring(1)) + (mutationInMinutes * 100)
   const newIcalValue = 'T' + newIcalValueInt.toString().padStart(6, '0')
   containerElement.setAttribute('data-ical', newIcalValue)
 
   // Mutate input control (can change to anything, Google looks at the above)
-  const inputElement = document.querySelectorAll(`[jsname="${containerElementJSName}"] input`)[0]
+  const inputElement = getElementOrThrow(() => document.querySelectorAll(`[jsname="${containerElementJSName}"] input`)[0], "Time input")
   const newValue = "whatever"
   inputElement.setAttribute('data-initial-value', newValue)
 
@@ -54,7 +64,7 @@ const callback = function() {
       new Promise(r => setTimeout(r, wait))
         .then(() => {
           // 1. Expand datetime section of modal
-          const timeslotButton = document.querySelectorAll('[jsname="TAmOZ"] button')[0] // TAmOZ is the jsname value of the dev containing the button that expands the datetime section of the modal
+          const timeslotButton = getElementOrThrow(() => document.querySelectorAll('[jsname="TAmOZ"] button')[0], "Timeslot expand button") // TAmOZ is the jsname value of the dev containing the button that expands the datetime section of the modal
           timeslotButton.click()
 
           chrome.storage.sync.get("startTimeOffsetInMinutes", async data => {
@@ -79,7 +89,7 @@ const callback = function() {
               // 4. Focus back to the "title" input
               await new Promise(r => setTimeout(r, wait))
               console.log("Giving focus back to Title input")
-              const titleElement = document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] > input`)[0] // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
+              const titleElement = getElementOrThrow(() => document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] > input`)[0], "Title input") // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
               titleElement.focus()
             })
           })
@@ -89,6 +99,7 @@ const callback = function() {
 }
 
 
+// Main execution
 let modalVisible = false
 const wait = 100
 const modalContainer = document.getElementById("yDmH0d") // yDmH0d is the jsname value of the div containing the DOM tree that is the modal (it is visible but empty when the model is not visible)
