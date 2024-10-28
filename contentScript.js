@@ -89,7 +89,7 @@ const callback = function() {
               // 4. Focus back to the "title" input
               await new Promise(r => setTimeout(r, wait))
               console.log("Giving focus back to Title input")
-              const titleElement = getElementOrThrow(() => document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] > input`)[0], "Title input") // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
+              const titleElement = getElementOrThrow(() => document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] input`)[0], "Title input") // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
               titleElement.focus()
             })
           })
