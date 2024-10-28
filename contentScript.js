@@ -51,37 +51,39 @@ const callback = function() {
     modalVisible = !!modalContainer.children.length
 
     if (modalVisible) {
+      new Promise(r => setTimeout(r, wait))
+        .then(() => {
+          // 1. Expand datetime section of modal
+          const timeslotButton = document.querySelectorAll('[jsname="TAmOZ"] button')[0] // TAmOZ is the jsname value of the dev containing the button that expands the datetime section of the modal
+          timeslotButton.click()
 
-      // 1. Expand datetime section of modal
-      const timeslotButton = document.querySelectorAll('[jsname="TAmOZ"] button')[0] // TAmOZ is the jsname value of the dev containing the button that expands the datetime section of the modal
-      timeslotButton.click()
+          chrome.storage.sync.get("startTimeOffsetInMinutes", async data => {
+            const offset = parseInt(data.startTimeOffsetInMinutes)
 
-      chrome.storage.sync.get("startTimeOffsetInMinutes", async data => {
-        const offset = parseInt(data.startTimeOffsetInMinutes)
+            // 2. Adjust start-time
+            await new Promise(r => setTimeout(r, wait + 100))
+            console.log("Adjusting start-time")
+            await mutateTime("B4GDSd", offset) // B4GDSd is the jsname value of the div containing the tree that contains the start-time input
 
-        // 2. Adjust start-time
-        await new Promise(r => setTimeout(r, wait))
-        console.log("Adjusting start-time")
-        await mutateTime("B4GDSd", offset) // B4GDSd is the jsname value of the div containing the tree that contains the start-time input
+            chrome.storage.sync.get("persistDuration", async data => {
+              const persist = !!data.persistDuration
+              if (!persist) {
 
-        chrome.storage.sync.get("persistDuration", async data => {
-          const persist = !!data.persistDuration
-          if (!persist) {
+                // 3. Adjust the subsequently changed end-time back to what it was
+                //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
+                await new Promise(r => setTimeout(r, wait + 100))
+                console.log("Resetting end-time")
+                await mutateTime("XCHdmd", -offset) // XCHdmd is the jsname value of the div containing the tree that contains the end-time input
+              }
 
-            // 3. Adjust the subsequently changed end-time back to what it was
-            //    (Google tries to preserve the duration of the event, so when the start time changes, so does the end time)
-            await new Promise(r => setTimeout(r, wait))
-            console.log("Resetting end-time")
-            await mutateTime("XCHdmd", -offset) // XCHdmd is the jsname value of the div containing the tree that contains the end-time input
-          }
-
-          // 4. Focus back to the "title" input
-          await new Promise(r => setTimeout(r, wait))
-          console.log("Giving focus back to Title input")
-          const titleElement = document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] > input`)[0] // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
-          titleElement.focus()
+              // 4. Focus back to the "title" input
+              await new Promise(r => setTimeout(r, wait))
+              console.log("Giving focus back to Title input")
+              const titleElement = document.querySelectorAll(`[jsname="GYcwYe"] > [jsname="vhZMvf"] > input`)[0] // GYcwYe and vhZMvf are jsname values in the div tree that contains the title input
+              titleElement.focus()
+            })
+          })
         })
-      })
     }
   }
 }
