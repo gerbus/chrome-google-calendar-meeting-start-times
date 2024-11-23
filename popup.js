@@ -24,3 +24,12 @@ persistInputElement.addEventListener("change", e => {
 persistTooltipIconElement.addEventListener("mouseover", e => {
   persistTooltipElement.style.display = "block"
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  const donateForm = document.getElementById('donateForm');
+
+  donateForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    window.open('https://www.paypal.com/donate?hosted_button_id=XNQEASRPMBW4G', '_blank');
+  });
+});
